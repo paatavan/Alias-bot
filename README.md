@@ -23,8 +23,8 @@ Alias Dev Kit provides the following command:
 - ✨ `.reset` : This commands allows you to reset your username.
 - ✨ `.undo` : This commands allows you to go to the last nick names you add.
 
-- ❌ : Not in Alias Dev Kit.
-- ✨ : Usable in Alias Dev Kit.
+ ❌ : Not in Alias Dev Kit.
+ ✨ : Usable in Alias Dev Kit.
 
 - (。>︿<)_θ : Sorry to let you know that Alias Dev Kit Will not have these commands , you will need to create it with your hand.
 
