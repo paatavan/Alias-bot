@@ -2,7 +2,7 @@
 
 # 🤖 AliasBot :
 
-Alias Bot is a  nickname manager on Discord. This document will let you know the  functionality of Alias Bot!
+Alias Bot is a powerful tool for server administrators and moderators to efficiently manage and organize user nicknames within their Discord community. It provides a range of commands and options to set, change, and reset nicknames for server members. With Alias Bot, you can easily enforce naming conventions, add special tags or identifiers, or simply ensure that the nicknames reflect the server's rules and guidelines.
 
 ## 🧠 How to Use It :
 
