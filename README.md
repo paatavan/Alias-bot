@@ -1,4 +1,4 @@
-![Devkitimage](https://media.discordapp.net/attachments/1117130242033733642/1121438539545055433/Alias_Dev_Kit.png)
+
 
 # Alias-Dev-Kit
 
