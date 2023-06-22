@@ -1,6 +1,6 @@
 
 
-# ✨-Alias-Bot :
+# ✨-AliasBot :
 
 Alias Bot is a  nickname manager on Discord. This document will let you know the  functionality of Alias Bot!
 
