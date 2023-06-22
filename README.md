@@ -1,17 +1,10 @@
 
 
-# Alias-Dev-Kit
+# Alias-Bot
 
-Alias Dev Kit is a portion of the script that powers a nickname manager on Discord. This development kit will allow you to obtain the same functionality as Alias Bot!
+Alias Bot is a  nickname manager on Discord. This document will let you know the  functionality of Alias Bot!
 
-## How to Use It
 
-Follow these steps to use Alias Dev Kit:
-
-1. Run the following command in your terminal:
-`npm i` This command will install all the required modules to make the bot work.
-
-2. Edit the file named `config.js` and replace `YOUR_TOKEN_BOT` with the token of your Discord bot.
 
 ## Available Commands
 
@@ -23,4 +16,6 @@ Alias Dev Kit provides the following command:
 - `.reset` : This commands allows you to reset your username.
 - `.undo` : This commands allows you to go to the last nick names you add.
 Feel free to explore and utilize these commands to manage nicknames on your Discord server using Alias Dev Kit!
+
+## Fe
 
