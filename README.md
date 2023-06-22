@@ -16,13 +16,14 @@ Follow these steps to use Alias Dev Kit:
 ## Available Commands
 
 Alias Dev Kit provides the following command:
+- (。>︿<)_θ : Sorry to let you know that Alias Dev Kit Will not have these commands , you will need to create it with your hand.
 
 - ✅ `.nick  <nickname>`: This command allows you to set a custom nickname for you on your Discord server.  Replace `<nickname>` with the desired nickname.
 - ❌ `.ai` : This command allows you to generate 5 random nickname of your choices.
 - ❌ `.archives` : This command allows you to find your older nicknames.
 - ✅ `.reset` : This commands allows you to reset your username.
 - ✅ `.undo` : This commands allows you to go to the last nick names you add.
-- (。>︿<)_θ : Sorry to let you know that Alias Dev Kit Will not have these commands , you will need to create it with your hand.
+
 
  ❌ : Not in Alias Dev Kit.
  ✅ : Usable in Alias Dev Kit.
