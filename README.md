@@ -18,7 +18,7 @@ Follow these steps to use Alias Dev Kit:
 Alias Dev Kit provides the following command:
  
 
--  `.nick  <nickname>`: This command allows you to set a custom nickname for you on your Discord server.  Replace `<nickname>` with the desired nickname.
+-  `.nick  <nickname>`: This command allows you to set a custom nickname for you on your Discord server.  
 -  `.reset` : This commands allows you to reset your username.
 -  `.undo` : This commands allows you to go to the last nick names you add.
 
