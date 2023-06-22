@@ -16,7 +16,7 @@ Follow these steps to use Alias Dev Kit:
 ## Available Commands
 
 Alias Dev Kit provides the following command:
-- (。>︿<)_θ : Sorry to let you know that Alias Dev Kit Will not have these commands , you will need to create it with your hand.
+ (。>︿<)_θ : Sorry to let you know that Alias Dev Kit Will not have these commands , you will need to create it with your hand.
 
 - ✅ `.nick  <nickname>`: This command allows you to set a custom nickname for you on your Discord server.  Replace `<nickname>` with the desired nickname.
 - ❌ `.ai` : This command allows you to generate 5 random nickname of your choices.
