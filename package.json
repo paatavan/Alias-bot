@@ -1,1 +1,11 @@
+{
+  "dependencies": {
+    "@discordjs/builders": "^1.6.3",
+    "axios": "^1.4.0",
+    "chance": "^1.1.11",
+    "discord.js": "^13.16.0",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.0"
+  }
+}
 
