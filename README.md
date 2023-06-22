@@ -1,10 +1,10 @@
 
 
-# Alias-Bot
+# Alias-Bot :
 
 Alias Bot is a  nickname manager on Discord. This document will let you know the  functionality of Alias Bot!
 
-## How to Use It
+## How to Use It :
 
 Follow these steps to use Alias Dev Kit:
 
@@ -13,20 +13,28 @@ Follow these steps to use Alias Dev Kit:
 
 2. Edit the file named `config.js` and replace `YOUR_TOKEN_BOT` with the token of your Discord bot.
 
-## Available Commands
+## Available Commands :
 
 Alias Dev Kit provides the following command:
- (。>︿<)_θ : Sorry to let you know that Alias Dev Kit Will not have these commands , you will need to create it with your hand.
+ 
 
-- ✅ `.nick  <nickname>`: This command allows you to set a custom nickname for you on your Discord server.  Replace `<nickname>` with the desired nickname.
-- ❌ `.ai` : This command allows you to generate 5 random nickname of your choices.
-- ❌ `.archives` : This command allows you to find your older nicknames.
-- ✅ `.reset` : This commands allows you to reset your username.
-- ✅ `.undo` : This commands allows you to go to the last nick names you add.
+-  `.nick  <nickname>`: This command allows you to set a custom nickname for you on your Discord server.  Replace `<nickname>` with the desired nickname.
+-  `.reset` : This commands allows you to reset your username.
+-  `.undo` : This commands allows you to go to the last nick names you add.
+
+## Alias Bot Commands :
+
+-  `.nick  <nickname>`: This command allows you to set a custom nickname for you on your Discord server.  Replace `<nickname>` with the desired nickname.
+-  `.reset` : This commands allows you to reset your username.
+-  `.undo` : This commands allows you to go to the last nick names you add.
+-  `.ai` : This command allows you to generate 5 random nickname of your choices.
+-  `.archives` : This command allows you to find your older nicknames.
+-  `.supports : This command allows you to support devellopers.
+-  `.mores` : This commands allows you to know mores about alias bot.
+-  `.how` : This commands allows you to know commands of alias bot.
 
 
- ❌ : Not in Alias Dev Kit.
- ✅ : Usable in Alias Dev Kit.
+
 
 
 
