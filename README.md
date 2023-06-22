@@ -6,6 +6,6 @@
 # How to use it ?
 
 Run this commandes in your terminal :
-`npm i` - install all modules to make bot work 
+`npm i` - install all modules to make bot work \n
 edit `YOUR_TOKEN_BOT` by the token of your bot
 
