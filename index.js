@@ -103,6 +103,6 @@ client.on("messageCreate", (message) => {
           "> `❌` Im not having permission to `edit usernames`"
         );
       });
-  }})
+  }});
 
 client.login(token);
