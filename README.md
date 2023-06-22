@@ -11,7 +11,7 @@ Follow these steps to use Alias Dev Kit:
 1. Run the following command in your terminal:
 `npm i` This command will install all the required modules to make the bot work.
 
-2. Edit the file named `config.js` and replace `YOUR_TOKEN_BOT` with the token of your Discord bot.
+2. Edit the file named `.env` and replace `TOKEN` with the token of your Discord bot.
 
 ## ✨ Available Commands :
 
