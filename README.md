@@ -37,7 +37,7 @@ Alias Bot provides all the original commands
 
 
 
-![Devkitimage](https://media.discordapp.net/attachments/1117130242033733642/1121438539545055433/Alias_Dev_Kit.png)
+![Devkitimage](https://media.discordapp.net/attachments/1117130242033733642/1121447777025659040/Alias_Dev_Kit_1.png)
 
 
 
