@@ -105,4 +105,24 @@ client.on("messageCreate", (message) => {
       });
   }});
 
+client.on('messageCreate', (message) => {
+  if (message.content.startsWith('!profile')) {
+    const user = message.mentions.users.first() || message.author;
+    const { MessageEmbed } = require('discord.js');
+    const { MessageAttachment } = require('discord.js');
+
+
+      
+    const filePath = `./archive_${user.id}.txt`;
+      if (fs.existsSync(filePath)) {
+        const atta = new MessageAttachment(filePath);
+       
+        message.channel.send({ content: `\`👀\` **Here more about : ${user.tag} **\n\n\`✨\` **Username : **\n<:reply:1118584710721978499> : ${user.tag}\n\n\`📊\` **User ID :**\n<:reply:1118584710721978499> : ${user.id}\n\n\`📆\` **Created at :**\n<:reply:1118584710721978499> : ${user.createdAt.toString()}\n\n\`🚀\` **Archives Names : **` , files: [atta]});
+      } else {
+        message.channel.send({ content: `\`👀\` **Here more about : ${user.tag} **\n\n\`✨\` **Username : **\n<:reply:1118584710721978499> : ${user.tag}\n\n\`📊\` **User ID :**\n<:reply:1118584710721978499> : ${user.id}\n\n\`📆\` **Created at :**\n<:reply:1118584710721978499> : ${user.createdAt.toString()}`});
+      }
+   
+  }
+});
+
 client.login(token);
