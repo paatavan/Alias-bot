@@ -21,6 +21,7 @@ Alias Dev Kit provides the following command:
 -  `.nick  <nickname>`: This command allows you to set a custom nickname for you on your Discord server.  
 -  `.reset` : This commands allows you to reset your username.
 -  `.undo` : This commands allows you to go to the last nick names you add.
+- `.profiles` : This commands allows you to know pseudo of user and mores.
 
 ## ✨ Alias Bot Commands :
 
@@ -34,6 +35,7 @@ Alias Bot provides all the original commands
 -  `.supports` : This command allows you to support devellopers.
 -  `.mores` : This commands allows you to know mores about alias bot.
 -  `.how` : This commands allows you to know commands of alias bot.
+- `.profiles` : This commands allows you to know pseudo of user and mores.
 
 
 
