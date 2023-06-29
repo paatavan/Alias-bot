@@ -1,0 +1,551 @@
+const {Client,Intents,MessageActionRow,MessageButton,} = require("discord.js");
+const {SlashCommandBuilder} = require('@discordjs/builders')
+const fs = require("fs");
+
+require('dotenv').config();
+
+const axios = require("axios");
+const chance = require("chance").Chance();
+const client = new Client({
+  intents: [
+       Intents.FLAGS.GUILDS,
+       Intents.FLAGS.GUILD_MESSAGES,
+       Intents.FLAGS.GUILD_MEMBERS,
+  ],
+});
+const token = process.env.TOKEN;
+
+
+const apiUrl = "https://randomuser.me/api/";
+
+// Stocke les pseudos précédents des utilisateurs
+const previousNicknames = new Map();
+
+client.on("ready", () => {
+  console.log(`Connecté en tant que ${client.user.tag}`);
+
+    client.user.setActivity(".how or /how to know more !" , {type: "PLAYING"}) 
+
+});
+
+client.on("messageCreate", (message) => {
+  if (message.author.bot || !message.guild) return; // Ignorer les messages des bots et les messages en dehors des serveurs
+
+  const args = message.content.split(" ");
+  const command = args.shift().toLowerCase();
+
+  if (command === ".nick") {
+    const nickname = args.join(" ");
+    if (!nickname) {
+      message.reply("> `❌` Uses : `.nick [nickname]`");
+      return;
+    }
+
+    // Stocke le pseudo précédent de l'utilisateur
+    const previousNickname =
+      message.member.nickname || message.member.user.username;
+    previousNicknames.set(message.member.id, previousNickname);
+
+    message.member
+      .setNickname(nickname)
+      .then(() => {-
+        message.reply(
+          "> `✨`" + ` Your nickname has been modified to "${nickname}"`
+        );
+        // Sauvegarde le pseudo précédent dans le fichier texte
+        savePreviousNickname(message.member.id, previousNickname);
+      })
+      .catch((error) => {
+        console.error(`Impossible de changer le pseudo: ${error}`);
+        message.reply("> `❌` Im not having permission to `edit usernames`");
+      });
+  }
+
+  if (command === ".undo") {
+    // Vérifie si le pseudo précédent de l'utilisateur est stocké
+    if (!previousNicknames.has(message.member.id)) {
+      message.reply("> `❌` You have no precedent nick names");
+      return;
+    }
+
+    const previousNickname = previousNicknames.get(message.member.id);
+
+    message.member
+      .setNickname(previousNickname)
+      .then(() => {
+        message.reply(
+          "> `✨`" +
+            ` Your nickname has been restaured to  "${previousNickname}"`
+        );
+        previousNicknames.delete(message.member.id);
+      })
+      .catch((error) => {
+        console.error(`Impossible de restaurer le pseudo: ${error}`);
+        message.reply("> `❌` Im not having permission to `edit usernames`");
+      });
+  }
+
+  if (command === ".reset") {
+    const defaultNickname = message.member.user.username;
+
+    message.member
+      .setNickname(defaultNickname)
+      .then(() => {
+        message.channel.send(
+          "> `✨`" + ` You nicknames has been reset to "${defaultNickname}"`
+        );
+        // Supprime le pseudo précédent stocké pour l'utilisateur
+        deletePreviousNickname(message.member.id);
+      })
+      .catch((error) => {
+        console.error(
+          `Im not having permission to ` + " `edit usernames` " + ` ${error}`
+        );
+        message.channel.send(
+          "> `❌` Im not having permission to `edit usernames`"
+        );
+      });
+  }
+
+  if (command === ".archives") {
+    const previousNicknamesList = getPreviousNicknames(message.member.id);
+
+    if (previousNicknamesList.length > 0) {
+      const previousNicknamesString = previousNicknamesList.join("\n");
+      message.reply(
+        "> `📂` " +
+          `**Here's your older nick names** :  \n  ` +
+          "```" +
+          `${previousNicknamesString}` +
+          "```"
+      );
+    } else {
+      message.channel.send(
+        "> `❌` No nicknames has been registred for you nows."
+      );
+    }
+  }
+  if (command === ".ai") {
+    const username0 = chance.twitter();
+    const username1 = chance.twitter();
+    const username2 = chance.twitter();
+    const username3 = chance.twitter();
+    const row = new MessageActionRow().addComponents(
+      new MessageButton()
+        .setCustomId(username0)
+        .setLabel(username0)
+        .setStyle("PRIMARY"),
+      new MessageButton()
+        .setCustomId(username1)
+        .setLabel(username1)
+        .setStyle("PRIMARY"),
+      new MessageButton()
+        .setCustomId(username2)
+        .setLabel(username2)
+        .setStyle("PRIMARY"),
+      new MessageButton()
+        .setCustomId(username3)
+        .setLabel(username3)
+        .setStyle("PRIMARY")
+    );
+    message.reply({
+      content: "> `🧠` Here some nick names being generatedf by us for you.",
+      components: [row],
+    });
+  }
+});
+
+client.on("interactionCreate", (interaction) => {
+  if (!interaction.isButton()) return;
+
+  const nickname = interaction.customId;
+  const member = interaction.member;
+
+  member
+    .setNickname(nickname)
+    .then(() => {
+      interaction.reply(
+        "> `✨`" + ` Your nickname has been modified to "${nickname}"`
+      );
+    })
+    .catch((error) => {
+      console.error(`Impossible de changer le pseudo: ${error}`);
+      interaction.reply("> `❌` Im not having permission to `edit usernames`");
+    });
+});
+
+function generateRandomUsername() {
+  return axios.get(apiUrl).then((response) => {
+    const user = response.data.results[0];
+    const { first, last } = user.name;
+    return `${first} ${last}`;
+  });
+}
+
+function savePreviousNickname(userId, nickname) {
+  const data = `${nickname}\n`;
+  fs.appendFile(`archive_${userId}.txt`, data, (err) => {
+    if (err) throw err;
+  });
+}
+
+function deletePreviousNickname(userId) {}
+
+function getPreviousNicknames(userId) {
+  try {
+    const data = fs.readFileSync(`archive_${userId}.txt`, "utf8");
+    const previousNicknamesList = data.trim().split("\n");
+    return previousNicknamesList;
+  } catch (err) {
+    return [];
+  }
+}
+
+
+
+client.on("messageCreate", async (message) => {
+  if (message.content === ".how") {
+    message.channel.send(
+      "> `📌`**Needs helps ?**\n> <:reply:1118584710721978499> : *Here all my current commands !* \n\n> `✨`  **Nick Names Commands :**\n> <:moreply:1118975483464400966> : `.nick [name]` *get a new nicknames.*\n> <:moreply:1118975483464400966> : `.undo` *undo your pseudo to the last.*\n> <:moreply:1118975483464400966> : `.reset` *reset your nickname to your pseudo.*\n> <:moreply:1118975483464400966> : `.archives` *see older nick names you used.*\n> <:reply:1118584710721978499> : `.profile` *about people.*\n\n> `🤖` **Supportive commands :**\n> <:moreply:1118975483464400966> : `.supports`*support us for free cookie.*\n> <:moreply:1118975483464400966> : `.mores` *get mores specs of alias.*\n> <:reply:1118584710721978499> : `.how` *get helps of alias bot.*\n\n> `🧠` **API Commands :**\n> <:reply:1118584710721978499> : `.ai` *generate a random nicknames.*"
+    );
+  }
+});
+
+client.on("messageCreate", async (message) => {
+  if (message.content === ".mores") {
+
+  
+    message.channel.send({
+      content:
+      "> `🤖` **More specs of alias Bot :**\n\n> <:moreply:1118975483464400966>  :** Version** `0.7.5 LTS`\n> <:moreply:1118975483464400966>  : **Language** : `JavaScript`\n> <:moreply:1118975483464400966>  : **Library** : `Discord.js`\n> <:moreply:1118975483464400966>  : **Creator** : `Aka`\n> <:reply:1118584710721978499>  : **GitHub** : [Aka Github pages](https://github.com/zoullien/)\n\n> `✨` **Recent Updates :**\n> <:reply:1118584710721978499> : **Update** : `slash commands`"
+    });
+  }
+});
+
+
+client.on('messageCreate', (message) => {
+  if (message.content.startsWith('.profile')) {
+    const user = message.mentions.users.first() || message.author;
+    const { MessageEmbed } = require('discord.js');
+    const { MessageAttachment } = require('discord.js');
+
+
+      
+    const filePath = `./archive_${user.id}.txt`;
+      if (fs.existsSync(filePath)) {
+        const atta = new MessageAttachment(filePath);
+       
+        message.channel.send({ content: `\`👀\` **Here more about : ${user.tag} **\n\n\`✨\` **Username : **\n<:reply:1118584710721978499> : ${user.tag}\n\n\`📊\` **User ID :**\n<:reply:1118584710721978499> : ${user.id}\n\n\`📆\` **Created at :**\n<:reply:1118584710721978499> : ${user.createdAt.toString()}\n\n\`🚀\` **Archives Names : **` , files: [atta]});
+      } else {
+        message.channel.send({ content: `\`👀\` **Here more about : ${user.tag} **\n\n\`✨\` **Username : **\n<:reply:1118584710721978499> : ${user.tag}\n\n\`📊\` **User ID :**\n<:reply:1118584710721978499> : ${user.id}\n\n\`📆\` **Created at :**\n<:reply:1118584710721978499> : ${user.createdAt.toString()}`});
+      }
+   
+  }
+});
+
+
+
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+//Commandes slash do not touch its dangerous hard to dev//Commandes slash do not touch its dangerous hard to dev
+
+
+
+
+client.on("ready", () => {
+  console.log(`Commandes slash`);
+  const data0 = new SlashCommandBuilder()
+  .setName('nick')
+  .setDescription('renommer')
+  .addStringOption(option =>
+    option.setName('nickname')
+      .setDescription('nouveaux nick name')
+      .setRequired(true)
+  )
+  client.application.commands.create(data0)
+  const data1 = new SlashCommandBuilder()
+  .setName('undo')
+  .setDescription('undo')
+  client.application.commands.create(data1)
+  const data2 = new SlashCommandBuilder()
+  .setName('reset')
+  .setDescription('reset')
+  client.application.commands.create(data2)
+  const data3 = new SlashCommandBuilder()
+  .setName('archives')
+  .setDescription('archives')
+  client.application.commands.create(data3)
+  const data4 = new SlashCommandBuilder()
+  .setName('ai')
+  .setDescription('ai')
+  client.application.commands.create(data4)
+  const data5 = new SlashCommandBuilder()
+  .setName('mores')
+  .setDescription('mores')
+  client.application.commands.create(data5)
+  const data6 = new SlashCommandBuilder()
+  .setName('supports')
+  .setDescription('supports')
+  client.application.commands.create(data6)
+  const data7 = new SlashCommandBuilder()
+  .setName('how')
+  .setDescription('how')
+  client.application.commands.create(data7)
+  const data8 = new SlashCommandBuilder()
+  .setName('profile')
+  .setDescription('profil')
+  .addUserOption(option =>
+    option.setName('user')
+      .setDescription('user')
+      .setRequired(true)
+  )
+  client.application.commands.create(data8)
+});
+
+
+
+
+
+
+
+
+
+// Commande slash pour .nick
+client.on("interactionCreate", (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  const { options } = interaction;
+
+  if (interaction.commandName === "nick") {
+    const nickname = options.getString("nickname");
+
+    if (!nickname) {
+      interaction.reply({
+        content: "> `❌` Uses : `/nick [nickname]`",
+        ephemeral: true,
+      });
+      return;
+    }
+
+    const previousNickname =
+      interaction.member.nickname || interaction.member.user.username;
+    previousNicknames.set(interaction.member.id, previousNickname);
+
+    interaction.member
+      .setNickname(nickname)
+      .then(() => {
+        interaction.reply({
+          content:
+            "> `✨`" + ` Your nickname has been modified to "${nickname}"`,
+        });
+        savePreviousNickname(interaction.member.id, previousNickname);
+      })
+      .catch((error) => {
+        console.error(`Impossible de changer le pseudo: ${error}`);
+        interaction.reply({
+          content: "> `❌` Im not having permission to `edit usernames`",
+          ephemeral: true,
+        });
+      });
+  }
+});
+
+// Commande slash pour .undo
+client.on("interactionCreate", (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  if (interaction.commandName === "undo") {
+    if (!previousNicknames.has(interaction.member.id)) {
+      interaction.reply({
+        content: "> `❌` You have no precedent nick names",
+        ephemeral: true,
+      });
+      return;
+    }
+
+    const previousNickname = previousNicknames.get(interaction.member.id);
+
+    interaction.member
+      .setNickname(previousNickname)
+      .then(() => {
+        interaction.reply({
+          content:
+            "> `✨`" +
+            ` Your nickname has been restaured to  "${previousNickname}"`,
+        });
+        previousNicknames.delete(interaction.member.id);
+      })
+      .catch((error) => {
+        console.error(`Impossible de restaurer le pseudo: ${error}`);
+        interaction.reply({
+          content: "> `❌` Im not having permission to `edit usernames`",
+          ephemeral: true,
+        });
+      });
+  }
+});
+
+// Commande slash pour .reset
+client.on("interactionCreate", (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  if (interaction.commandName === "reset") {
+    const defaultNickname = interaction.member.user.username;
+
+    interaction.member
+      .setNickname(defaultNickname)
+      .then(() => {
+        interaction.reply({
+          content:
+            "> `✨`" + ` You nicknames has been reset to "${defaultNickname}"`,
+        });
+        deletePreviousNickname(interaction.member.id);
+      })
+      .catch((error) => {
+        console.error(
+          `Im not having permission to ` +
+            " `edit usernames` " +
+            ` ${error}`
+        );
+        interaction.reply({
+          content: "> `❌` Im not having permission to `edit usernames`",
+          ephemeral: true,
+        });
+      });
+  }
+});
+
+// Commande slash pour .archives
+client.on("interactionCreate", (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  if (interaction.commandName === "archives") {
+    const previousNicknamesList = getPreviousNicknames(interaction.member.id);
+
+    if (previousNicknamesList.length > 0) {
+      const previousNicknamesString = previousNicknamesList.join("\n");
+      interaction.reply({
+        content:
+          "> `📂` " +
+          `**Here's your older nick names** :  \n  ` +
+          "```" +
+          `${previousNicknamesString}` +
+          "```",
+      });
+    } else {
+      interaction.reply({
+        content:
+          "> `❌` No nicknames has been registred for you nows.",
+        ephemeral: true,
+      });
+    }
+  }
+});
+
+// Commande slash pour .ai
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  if (interaction.commandName === "ai") {
+    const username0 = chance.twitter();
+    const username1 = chance.twitter();
+    const username2 = chance.twitter();
+    const username3 = chance.twitter();
+
+    const row = new MessageActionRow().addComponents(
+      new MessageButton()
+        .setCustomId(username0)
+        .setLabel(username0)
+        .setStyle("PRIMARY"),
+      new MessageButton()
+        .setCustomId(username1)
+        .setLabel(username1)
+        .setStyle("PRIMARY"),
+      new MessageButton()
+        .setCustomId(username2)
+        .setLabel(username2)
+        .setStyle("PRIMARY"),
+      new MessageButton()
+        .setCustomId(username3)
+        .setLabel(username3)
+        .setStyle("PRIMARY")
+    );
+
+    interaction.reply({
+      content: "> `🧠` Here some nick names being generatedf by us for you.",
+      components: [row],
+    });
+  }
+});
+
+// Commande slash pour .how
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  if (interaction.commandName === "how") {
+    interaction.reply({
+      content:
+        "> `📌`**Needs helps ?**\n> <:reply:1118584710721978499> : *Here all my current commands !* \n\n> `✨`  **Nick Names Commands :**\n> <:moreply:1118975483464400966> : `/nick [name]` *get a new nicknames.*\n> <:moreply:1118975483464400966> : `/undo` *undo your pseudo to the last pseudo.*\n> <:moreply:1118975483464400966> : `/reset` *reset your nickname to your pseudo.*\n> <:moreply:1118975483464400966> : `/archives` *see older nick names you used.*\n> <:reply:1118584710721978499> : `/profile` *about people.*\n\n> `🤖` **Supportive commands :**\n> <:moreply:1118975483464400966> : `/supports`*support us for free cookie.*\n> <:moreply:1118975483464400966> : `/mores` *get mores specs of alias.*\n> <:reply:1118584710721978499> : `/how` *get helps of alias bot.*\n\n> `🧠` **API Commands :**\n> <:reply:1118584710721978499> : `/ai` *generate a random nicknames.*",
+    });
+  }
+});
+
+// Commande slash pour .supports
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  if (interaction.commandName === "supports") {
+    interaction.reply({
+      content:
+        "> `🍪` **Thanks for supporting us !**\n> Here's your virtual cookie : 🍪",
+    });
+  }
+});
+
+// Commande slash pour .mores
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  if (interaction.commandName === "mores") {
+    interaction.reply({
+      content:
+      "> `🤖` **More specs of alias Bot :**\n\n> <:moreply:1118975483464400966>  :** Version** `0.7.5 LTS`\n> <:moreply:1118975483464400966>  : **Language** : `JavaScript`\n> <:moreply:1118975483464400966>  : **Library** : `Discord.js`\n> <:moreply:1118975483464400966>  : **Creator** : `Aka`\n> <:reply:1118584710721978499>  : **GitHub** : [Aka Github pages](https://github.com/zoullien/)\n\n> `✨` **Recent Updates :**\n> <:reply:1118584710721978499> : **Update** : `slash commands`"
+    });
+  }
+});
+client.on('interactionCreate', async (interaction) => {
+  if (interaction.commandName === 'profile') {
+    
+    const { MessageAttachment } = require('discord.js');
+    const userOption = interaction.options.getUser('user');
+  const user = userOption ? userOption : interaction.user;
+   
+
+
+      
+    const filePath = `./archive_${user.id}.txt`;
+      if (fs.existsSync(filePath)) {
+        const atta = new MessageAttachment(filePath);
+       
+       await interaction.reply({ content: `\`👀\` **Here more about : ${user.tag} **\n\n\`✨\` **Username : **\n<:reply:1118584710721978499> : ${user.tag}\n\n\`📊\` **User ID :**\n<:reply:1118584710721978499> : ${user.id}\n\n\`📆\` **Created at :**\n<:reply:1118584710721978499> : ${user.createdAt.toString()}\n\n\`🚀\` **Archives Names : **` , files: [atta]});
+      } else {
+       await  interaction.reply({ content: `\`👀\` **Here more about : ${user.tag} **\n\n\`✨\` **Username : **\n<:reply:1118584710721978499> : ${user.tag}\n\n\`📊\` **User ID :**\n<:reply:1118584710721978499> : ${user.id}\n\n\`📆\` **Created at :**\n<:reply:1118584710721978499> : ${user.createdAt.toString()}`});
+      }
+   
+  }
+});
+
+client.login(token);
